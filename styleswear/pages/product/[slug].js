@@ -1,10 +1,28 @@
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 
 export default function Page() {
     const router = useRouter()
     const { slug } = router.query
+    const [pincode, setPincode] = useState('')
+    const [serviceable, setServiceable] = useState()
+
+    const checkServiceability = async () => {
+        let pincodeList = await fetch('http://localhost:3000/api/pincode')
+        let pincodeListJson = await pincodeList.json(pincode)
+        if (pincodeListJson.includes(parseInt(pincode))) {
+            setServiceable(true)
+        }
+        else {
+            setServiceable(false)
+        }
+    }
+    const onChangeService = (e) => {
+        setPincode(e.target.value)
+    }
+
     return (<>
         <section className="text-gray-600 body-font overflow-hidden">
             <div className="container px-5 py-24 mx-auto">
@@ -84,6 +102,18 @@ export default function Page() {
                                 </svg>
                             </button>
                         </div>
+                        <div className="pin mt-6 flex space-x-2 text-sm">
+                            <input onChange={onChangeService} type="text" className="px-2 border-2 border-gray-400 rounded-md" />
+                            <button onClick={checkServiceability} className="text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded">Check</button>
+                        </div>
+                        <div className="text-red-700 mt-5 text-xl">
+                            {serviceable && serviceable != null && <div>
+                                Sorry! We don't deliver to this pincode. You should come and pick it up from our store.
+                            </div>}
+                            {!serviceable && serviceable != null && <div>
+                                Yay! We deliver to this pincode. You can place your order now.
+                            </div>}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -91,3 +121,4 @@ export default function Page() {
     </>
     )
 }
+
