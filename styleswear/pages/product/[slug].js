@@ -10,7 +10,7 @@ export default function Page() {
     const [serviceable, setServiceable] = useState()
 
     const checkServiceability = async () => {
-        let pincodeList = await fetch('http://localhost:3000/api/pincode')
+        let pincodeList = await fetch('https://ecommerce-23.vercel.app/api/pincode')
         let pincodeListJson = await pincodeList.json(pincode)
         if (pincodeListJson.includes(parseInt(pincode))) {
             setServiceable(true)
